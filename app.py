@@ -33,6 +33,19 @@ def login():
             return jsonify({"message":"logado"})
     return jsonify({"message":"Password or username invalid"}), 400
 
+@app.route('/user/<int:id_user>', methods=["DELETE"]) 
+@login_required
+def delete_user(id_user):
+    user = User.query.get(id_user)
+    if id_user == current_user.id:
+        return jsonify({"message":"You cant delete user logged in"})
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message":f"User {id_user} removed"})
+    
+    return jsonify({"message":"User not found"})
+
 @app.route('/logout', methods=["GET"]) 
 @login_required
 def logout():
